@@ -9,7 +9,7 @@ There are two primary scripts to generate predictions for a given test file.
 
 ### Predictions
 
-The predictions generated for the competition assignment are made using a random forest, decision tree, and logistic regression. 
+The predictions generated for the competition assignment are made using a random forest, decision tree, and logistic regression. The given AUC is on the train
 
 * ```features103_pred1.txt```: Random Forest predictions using 103 features.
 * ```features103_pred2.txt```: Decision Tree predictions using 103 features.

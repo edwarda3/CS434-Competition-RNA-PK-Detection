@@ -30,6 +30,17 @@ def read(filename,validation=0.,testing=False):
         else:
             return (training_features,training_labels)
 
+def read_for_testing(filename):
+    dataframe = pandas.read_csv(filename,sep='\t',encoding='utf-8')
+    dataframe = dataframe.fillna(0.)
+    data = dataframe.values
+
+    testing_id = data[:, 0]
+    testing_features = data[:, 1:]
+    testing_features = testing_features.astype('float64')
+
+    return (testing_features,testing_id)
+
 def dump_model(model,name):
     from joblib import dump
     dump(model,name)
@@ -44,3 +55,23 @@ def normalize_features(features):
     scalar.fit(features)
     features = scalar.transform(features)
     return features
+
+class ModelAggregator:
+    def __init__(self):
+        self.models = []
+
+    def add(self,model):
+        self.models.append(model)
+
+    def predict(self,file_predict):
+        preds = []
+        for model in self.models:
+            p = model.predict(file_predict)
+            preds.append(p)
+        
+        probability_predictions = []
+        for instance in range(len(preds[0])):
+            probability = sum([preds[i][instance] for i in range(len(preds))]) / len(preds)
+            probability_predictions.append(probability)
+
+        return probability_predictions

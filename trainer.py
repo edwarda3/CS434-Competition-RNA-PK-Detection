@@ -18,7 +18,7 @@ def try_decision_tree(training,validation):
     mindepth,maxdepth = 1,12
     print("Trying trees from depth {} to {}".format(mindepth,maxdepth))
 
-    trees = []
+    trees = model_utils.ModelAggregator()
     for d in range(mindepth,maxdepth+1):
         tree = makeTree(t_features,t_labels,d)
 
@@ -27,12 +27,9 @@ def try_decision_tree(training,validation):
         v_pred = tree.predict(v_features)
         v_acc = sum([1 if(v_labels[i]==p) else 0 for i,p in enumerate(v_pred)])/len(v_labels)
         print('Decision Tree: Accuracy with d={}: (t:{:.4f}), (v:{:.4f})'.format(d, t_acc, v_acc))
-        trees.append((v_acc,tree))
+        trees.add(tree)
 
-    trees.sort(key=lambda x: x[0],reverse=True)
-
-    (_,model) = trees[0]
-    return model
+    return trees
 
 
 def try_rand_forest(training,validation):
@@ -51,7 +48,7 @@ def try_rand_forest(training,validation):
     attempts = 5
     print("Attempting {} times".format(attempts))
 
-    forests = []
+    forests = model_utils.ModelAggregator()
     for i in range(attempts):
         forest = makeForest(t_features,t_labels)
         t_pred = forest.predict(t_features)
@@ -59,12 +56,9 @@ def try_rand_forest(training,validation):
         v_pred = forest.predict(v_features)
         v_acc = sum([1 if(v_labels[i]==p) else 0 for i,p in enumerate(v_pred)])/len(v_labels)
         print('Random Forest (Attempt {}): (t:{:.4f}), (v:{:.4f})'.format(i,t_acc, v_acc))
-        forests.append((v_acc,forest))
+        forests.add(forest)
 
-    forests.sort(key=lambda x:x[0], reverse=True)
-    (_,model) = forests[0]
-
-    return model
+    return forests
 
 
 def try_log_reg(training,validation):
@@ -80,7 +74,7 @@ def try_log_reg(training,validation):
     attempts = 5
     print("Attempting {} times".format(attempts))
     
-    models = []
+    models = model_utils.ModelAggregator()
     for i in range(attempts):
         logreg = LogisticRegression(penalty='l2',solver='newton-cg',max_iter=200,fit_intercept=True)
         logreg.fit(t_features,t_labels)
@@ -90,12 +84,9 @@ def try_log_reg(training,validation):
         v_pred = logreg.predict(v_features)
         v_acc = sum([1 if(v_labels[i]==p) else 0 for i,p in enumerate(v_pred)])/len(v_labels)
         print('Logistic Regression (Attempt {}): Accuracy: (t:{:.4f}), (v:{:.4f})'.format(i,t_acc, v_acc))
-        models.append((v_acc,logreg))
+        models.add(logreg)
     
-    models.sort(key=lambda x:x[0],reverse=True)
-    (_,model) = models[0]
-
-    return model
+    return models
 
 
 def test_data_validity(training):
