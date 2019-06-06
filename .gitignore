@@ -1,0 +1,9 @@
+__pycache__/
+.vscode/
+*.fasta
+gen_scorer.py
+.DS_Store
+*.zip
+*.tar
+featuresall_train.txt
+featuresall_test.txt
